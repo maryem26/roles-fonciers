@@ -1,0 +1,21 @@
+services:
+  db:
+    image: postgres:16
+    container_name: roles-fonciers-db
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-roles}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-roles_dev_password}
+      POSTGRES_DB: ${POSTGRES_DB:-roles}
+    ports:
+      - "5433:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+      - ./sql:/sql:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+volumes:
+  pgdata:
