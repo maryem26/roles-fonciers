@@ -1,6 +1,8 @@
 """Command-line interface."""
 
 import logging
+import time
+from collections import Counter
 from pathlib import Path
 
 import psycopg
@@ -8,6 +10,7 @@ import typer
 
 from roles_fonciers.database import get_connection
 from roles_fonciers.index_loader import load_municipalities
+from roles_fonciers.xml_reader import XmlFormatError, iter_units, read_header
 
 SQL_DIR = Path(__file__).resolve().parents[2] / "sql"
 
@@ -71,3 +74,31 @@ def load_index(
     typer.echo(f"{loaded} municipalité(s) chargée(s), {skipped} ligne(s) ignorée(s).")
     if skipped:
         typer.echo("Les lignes ignorées sont détaillées dans les avertissements ci-dessus.")
+
+
+@app.command("inspect")
+def inspect_file(
+    xml_path: Path = typer.Argument(..., exists=True, dir_okay=False, help="Fichier XML d'un rôle."),
+) -> None:
+    """Lit un fichier XML et affiche un résumé (sans toucher à la base)."""
+    started = time.perf_counter()
+    units = 0
+    groups: Counter[str] = Counter()
+    try:
+        header = read_header(xml_path)
+        for unit in iter_units(xml_path):
+            units += 1
+            for name, items in unit.groups.items():
+                groups[name] += len(items)
+    except XmlFormatError as exc:
+        typer.echo(f"[{exc.code}] {exc}", err=True)
+        raise typer.Exit(code=1) from exc
+
+    typer.echo(f"Fichier      : {xml_path.name}")
+    typer.echo(
+        f"En-tête      : version {header.version}, municipalité {header.municipality_code}, "
+        f"année {header.assessment_year}"
+    )
+    typer.echo(f"Propriétés   : {units}")
+    typer.echo("Groupes      : " + ", ".join(f"{name}={count}" for name, count in sorted(groups.items())))
+    typer.echo(f"Durée        : {time.perf_counter() - started:.2f} s")

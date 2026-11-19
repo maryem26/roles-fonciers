@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RL xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="RL.xsd">
+  <!--Données générales-->
+  <VERSION>2.9</VERSION>
+  <RLM01A>45080</RLM01A>
+  <RLM02A>2025</RLM02A>
+  <RLUEx>
+    <!--Section 1 Identification de l'unité d'évaluation-->
+    <RL0101>
+      <RL0101x>
+        <RL0101Ax>1</RL0101Ax>
+        <RL0101Ex>RU</RL0101Ex>
+        <RL0101Gx>PRINCIPALE</RL0101Gx>
+      </RL0101x>
+    </RL0101>
+    <RL0103>
+      <RL0103x>
+        <RL0103Ax>5386175</RL0103Ax>
+      </RL0103x>
+      <RL0103x>
+        <RL0103Ax>5386176</RL0103Ax>
+      </RL0103x>
+      <RL0103x>
+        <RL0103Ax>6037128</RL0103Ax>
+      </RL0103x>
+      <RL0103x>
+        <RL0103Ax>6037129</RL0103Ax>
+      </RL0103x>
+    </RL0103>
+    <RL0104>
+      <RL0104A>0103</RL0104A>
+      <RL0104B>88</RL0104B>
+      <RL0104C>5630</RL0104C>
+    </RL0104>
+    <RL0105A>1552</RL0105A>
+    <RL0107A>0001</RL0107A>
+    <!--Section 2 Propriétaire-->
+    <RL0201>
+      <RL0201x>
+        <RL0201Gx>1983-01-01</RL0201Gx>
+        <RL0201Hx>2</RL0201Hx>
+      </RL0201x>
+      <RL0201U>1</RL0201U>
+    </RL0201>
+    <!--Section 3 Caractéristiques de l'unité d'évaluation-->
+    <RL0301A>672.64</RL0301A>
+    <RL0302A>2175813.70</RL0302A>
+    <RL0303A>2</RL0303A>
+    <RL0306A>10</RL0306A>
+    <RL0313A>1</RL0313A>
+    <!--Section 4 Valeurs au rôle d'évaluation-->
+    <RL0401A>2023-07-01</RL0401A>
+    <RL0402A>23787900</RL0402A>
+    <RL0403A>44110300</RL0403A>
+    <RL0404A>67898200</RL0404A>
+    <RL0405A>46791400</RL0405A>
+    <!--Section 5 Répartitions fiscales-->
+    <RL0501A>0</RL0501A>
+    <RL0504>
+      <RL0504x>
+        <RL0504Ax>F-2.1</RL0504Ax>
+        <RL0504Bx>204</RL0504Bx>
+        <RL0504Cx>8</RL0504Cx>
+        <RL0504Dx>23787900</RL0504Dx>
+        <RL0504Ex>T</RL0504Ex>
+        <RL0504Fx>2</RL0504Fx>
+      </RL0504x>
+      <RL0504x>
+        <RL0504Ax>F-2.1</RL0504Ax>
+        <RL0504Bx>204</RL0504Bx>
+        <RL0504Cx>8</RL0504Cx>
+        <RL0504Dx>44110300</RL0504Dx>
+        <RL0504Ex>B</RL0504Ex>
+        <RL0504Fx>2</RL0504Fx>
+      </RL0504x>
+      <RL0504x>
+        <RL0504Dx>67898200</RL0504Dx>
+        <RL0504Ex>I</RL0504Ex>
+        <RL0504Fx>2</RL0504Fx>
+      </RL0504x>
+    </RL0504>
+  </RLUEx>
+  <!--Section 6 Déclaration de dépôt du rôle par l'évaluateur-->
+</RL>
