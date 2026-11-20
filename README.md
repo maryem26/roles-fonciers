@@ -2,7 +2,7 @@
 
 Ce projet lit les fichiers XML des **rôles d'évaluation foncière du Québec** (Données Québec), vérifie leur contenu et les charge dans une base **PostgreSQL**. Le code est en **Python**, le chargement est **rejouable** (aucun doublon si on relance) et chaque fichier est chargé en **une seule transaction** (tout ou rien).
 
-> Contexte : test technique de recrutement. L'analyse, le modèle de données et la conception de l'import sont décrits dans le dossier [`docs/`](docs/).
+> Contexte : L'analyse, le modèle de données et la conception de l'import sont décrits dans le dossier [`docs/`](docs/).
 
 ## Démarrage rapide (sans rien télécharger)
 
