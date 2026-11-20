@@ -9,7 +9,9 @@ import psycopg
 import typer
 
 from roles_fonciers.database import get_connection
+from roles_fonciers.config import BATCH_SIZE
 from roles_fonciers.index_loader import load_municipalities
+from roles_fonciers.loader import FileResult, import_files
 from roles_fonciers.xml_reader import XmlFormatError, iter_units, read_header
 
 SQL_DIR = Path(__file__).resolve().parents[2] / "sql"
@@ -102,3 +104,51 @@ def inspect_file(
     typer.echo(f"Propriétés   : {units}")
     typer.echo("Groupes      : " + ", ".join(f"{name}={count}" for name, count in sorted(groups.items())))
     typer.echo(f"Durée        : {time.perf_counter() - started:.2f} s")
+
+
+STATUS_LABELS = {"loaded": "chargé", "rejected": "REJETÉ", "skipped": "ignoré"}
+
+
+def _print_result(result: FileResult) -> None:
+    typer.echo(
+        f"{result.file} : {STATUS_LABELS[result.status]} | {result.units_read} lue(s), "
+        f"{result.units_loaded} chargée(s), {result.units_rejected + result.units_duplicate} écartée(s)"
+    )
+    for issue in result.issues:
+        typer.echo(f"   [{issue.severity}] {issue.code}: {issue.message}")
+
+
+@app.command("load-roles")
+def load_roles(
+    path: Path = typer.Argument(..., exists=True, help="Un fichier XML, ou un dossier de fichiers XML."),
+    only: list[str] = typer.Option(
+        None, "--only", help="Ne traiter que ces fichiers, par préfixe de nom (ex. RL45080)."
+    ),
+    skip_existing: bool = typer.Option(False, "--skip-existing", help="Ignorer les rôles déjà chargés."),
+) -> None:
+    """Charge des rôles d'évaluation dans la base (un fichier = une transaction)."""
+    files = sorted(p for p in path.iterdir() if p.suffix.lower() == ".xml") if path.is_dir() else [path]
+    if only:
+        prefixes = [token.upper() for token in only]
+        files = [f for f in files if any(f.name.upper().startswith(prefix) for prefix in prefixes)]
+    if not files:
+        typer.echo("Aucun fichier XML à traiter.", err=True)
+        raise typer.Exit(code=1)
+
+    try:
+        results = import_files(files, BATCH_SIZE, skip_existing=skip_existing, on_result=_print_result)
+    except psycopg.OperationalError as exc:
+        typer.echo(f"Connexion à la base impossible : {exc}", err=True)
+        raise typer.Exit(code=1) from exc
+
+    by_status = Counter(r.status for r in results)
+    typer.echo("")
+    typer.echo(
+        f"Fichiers : {by_status['loaded']} chargé(s), {by_status['rejected']} rejeté(s), "
+        f"{by_status['skipped']} ignoré(s)"
+    )
+    typer.echo(
+        f"Propriétés : {sum(r.units_read for r in results)} lue(s), "
+        f"{sum(r.units_loaded for r in results)} chargée(s), "
+        f"{sum(r.units_rejected + r.units_duplicate for r in results)} écartée(s)"
+    )
